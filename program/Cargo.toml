@@ -1,0 +1,8 @@
+[package]
+edition = "2021"
+name = "ecies-program"
+version = "0.1.0"
+
+[dependencies]
+ecies-lib.workspace = true
+sp1-zkvm.workspace = true

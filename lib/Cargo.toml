@@ -1,0 +1,8 @@
+[package]
+edition = "2021"
+name = "ecies-lib"
+version = "0.1.0"
+
+[dependencies]
+ecies.workspace = true
+serde = { workspace = true, features = ["derive"] }

@@ -1,0 +1,22 @@
+[workspace]
+members = [
+  "lib",
+  "program",
+  "script",
+]
+resolver = "2"
+
+[workspace.dependencies]
+sp1-build = "5.0"
+sp1-sdk = "5.0"
+sp1-zkvm = "5.0"
+
+ecies = { git = "https://github.com/scroll-tech/ecies-rs.git", branch = "feat/secp256k1", default-features = false, features = ["aes-rust"] }
+
+serde = { version = "1.0", default-features = false }
+
+ecies-lib = { path = "lib" }
+
+[patch.crates-io]
+secp256k1 = { git = "https://github.com/sp1-patches/rust-secp256k1", tag = "patch-0.30.0-sp1-5.0.0" }
+tiny-keccak = { git = "https://github.com/sp1-patches/tiny-keccak", tag = "patch-2.0.2-sp1-4.0.0" }

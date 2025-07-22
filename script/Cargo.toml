@@ -1,0 +1,16 @@
+[package]
+edition = "2021"
+name = "ecies-script"
+version = "0.1.0"
+
+[dependencies]
+ecies-lib.workspace = true
+rand = "0.8"
+sp1-sdk.workspace = true
+
+[build-dependencies]
+sp1-build.workspace = true
+
+
+[features]
+profiling = ["sp1-sdk/profiling"]
