@@ -6,3 +6,4 @@ version = "0.1.0"
 [dependencies]
 ecies.workspace = true
 serde = { workspace = true, features = ["derive"] }
+k256 = { git = "https://github.com/sp1-patches/elliptic-curves", tag = "patch-k256-13.4-sp1-5.0.0" }

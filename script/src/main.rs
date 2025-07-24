@@ -1,6 +1,7 @@
 use ecies_lib::{utils::generate_keypair, *};
 use sp1_sdk::{CpuProver, Prover, SP1Stdin, include_elf};
 use std::env;
+use ecies_lib::elliptic_curve::sec1::ToEncodedPoint;
 
 pub const ELF: &[u8] = include_elf!("ecies-program");
 
@@ -10,32 +11,35 @@ fn main() {
     let client = CpuProver::new();
     let (proving_key, verifying_key) = client.setup(ELF);
 
-    let repetitions = 1000;
-
     let (secret_key, public_key) = generate_keypair();
     let address: [u8; 20] = rand::random();
-    let ciphertext = encrypt(&public_key.serialize(), &address).unwrap();
+    let pk_encoded = public_key.to_encoded_point(true).to_bytes();
+    let ciphertext = encrypt(&pk_encoded, &address).unwrap();
     println!("[+] encrypted address length: {}", ciphertext.len());
 
     println!("[+] Running decrypt:");
 
-    if cfg!(feature = "profiling") {
-        env::set_var("TRACE_FILE", format!("decrypt-{repetitions}.json"));
-    }
+    let repetitions = if cfg!(feature = "profiling") {
+        env::set_var("TRACE_FILE", "decrypt.json");
+        1
+    } else {
+        1000
+    };
 
     let mut stdin = SP1Stdin::new();
     stdin.write(&repetitions);
     stdin.write(&ExecMode::All);
-    stdin.write_slice(secret_key.as_ref());
+    stdin.write_slice(secret_key.to_bytes().as_slice());
     stdin.write_slice(&ciphertext);
 
     let (mut public_values, report) = client.execute(&ELF, &stdin).run().unwrap();
     let total_instruction_count = report.total_instruction_count();
     println!("- Total Instructions: {total_instruction_count}");
-    let decrypted: Vec<u8> = public_values.read();
-    assert_eq!(decrypted, address);
 
     if !cfg!(feature = "profiling") {
+        let decrypted: Vec<u8> = public_values.read();
+        assert_eq!(decrypted, address);
+
         let now = std::time::Instant::now();
         let proof = client
             .prove(&proving_key, &stdin)
@@ -50,7 +54,7 @@ fn main() {
         let mut stdin = SP1Stdin::new();
         stdin.write(&repetitions);
         stdin.write(&ExecMode::Baseline);
-        stdin.write_slice(secret_key.as_ref());
+        stdin.write_slice(secret_key.to_bytes().as_slice());
         stdin.write_slice(&ciphertext);
         let (_, report) = client.execute(&ELF, &stdin).run().unwrap();
         let baseline_instruction_count = report.total_instruction_count();
