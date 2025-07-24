@@ -4,6 +4,9 @@ name = "ecies-lib"
 version = "0.1.0"
 
 [dependencies]
-ecies.workspace = true
+hkdf.workspace = true
+hmac.workspace = true
+k256.workspace = true
+rand_core.workspace = true
 serde = { workspace = true, features = ["derive"] }
-k256 = { git = "https://github.com/sp1-patches/elliptic-curves", tag = "patch-k256-13.4-sp1-5.0.0" }
+sha2.workspace = true

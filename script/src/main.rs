@@ -1,7 +1,6 @@
-use ecies_lib::{utils::generate_keypair, *};
+use ecies_lib::{ExecMode, decrypt, encrypt, generate_keypair};
 use sp1_sdk::{CpuProver, Prover, SP1Stdin, include_elf};
 use std::env;
-use ecies_lib::elliptic_curve::sec1::ToEncodedPoint;
 
 pub const ELF: &[u8] = include_elf!("ecies-program");
 
@@ -13,10 +12,9 @@ fn main() {
 
     let (secret_key, public_key) = generate_keypair();
     let address: [u8; 20] = rand::random();
-    let pk_encoded = public_key.to_encoded_point(true).to_bytes();
-    let ciphertext = encrypt(&pk_encoded, &address).unwrap();
+    let ciphertext = encrypt(&public_key, &address);
+    assert_eq!(decrypt(&secret_key, &ciphertext), address);
     println!("[+] encrypted address length: {}", ciphertext.len());
-
     println!("[+] Running decrypt:");
 
     let repetitions = if cfg!(feature = "profiling") {

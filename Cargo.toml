@@ -7,16 +7,16 @@ members = [
 resolver = "2"
 
 [workspace.dependencies]
+ecies-lib = { path = "lib" }
+hkdf = "*"
+hmac = "*"
+k256 = { git = "https://github.com/sp1-patches/elliptic-curves", tag = "patch-k256-13.4-sp1-5.0.0" }
+rand_core = "*"
+serde = { version = "1.0", default-features = false }
+sha2 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", tag = "patch-sha2-0.10.9-sp1-4.0.0" }
 sp1-build = "5.0"
 sp1-sdk = "5.0"
 sp1-zkvm = "5.0"
 
-ecies = { git = "https://github.com/scroll-tech/ecies-rs.git", branch = "feat/secp256k1", default-features = false, features = ["aes-rust"] }
-
-serde = { version = "1.0", default-features = false }
-
-ecies-lib = { path = "lib" }
-
 [patch.crates-io]
-tiny-keccak = { git = "https://github.com/sp1-patches/tiny-keccak", tag = "patch-2.0.2-sp1-4.0.0" }
-sha2-v0-10-9 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", package = "sha2", tag = "patch-sha2-0.10.9-sp1-4.0.0" }
+sha2 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", tag = "patch-sha2-0.10.9-sp1-4.0.0" }

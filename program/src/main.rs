@@ -10,18 +10,16 @@ pub fn main() {
     let exec_mode = sp1_zkvm::io::read::<ExecMode>();
 
     let sk = sp1_zkvm::io::read_vec();
+    let sk = SecretKey::from_slice(&sk).unwrap();
     let ciphertext = sp1_zkvm::io::read_vec();
-    let address = decrypt(sk.as_ref(), ciphertext.as_ref()).unwrap();
+    let ciphertext: &Message = ciphertext.as_slice().try_into().unwrap();
+    let address = decrypt(&sk, ciphertext);
 
     #[cfg(not(feature = "profiling"))]
     {
         if exec_mode == ExecMode::All {
             for _ in 0..repetitions {
-                black_box(decrypt(
-                    black_box(sk.as_ref()),
-                    black_box(ciphertext.as_ref()),
-                ))
-                    .unwrap();
+                black_box(decrypt(black_box(&sk), black_box(ciphertext)));
             }
         }
 
