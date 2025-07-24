@@ -23,6 +23,6 @@ pub fn main() {
             }
         }
 
-        sp1_zkvm::io::commit(&address);
+        sp1_zkvm::io::commit_slice(&address);
     }
 }

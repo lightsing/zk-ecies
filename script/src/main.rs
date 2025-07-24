@@ -14,6 +14,7 @@ fn main() {
     let address: [u8; 20] = rand::random();
     let ciphertext = encrypt(&public_key, &address);
     assert_eq!(decrypt(&secret_key, &ciphertext), address);
+    println!("[+] address: {:?}", address);
     println!("[+] encrypted address length: {}", ciphertext.len());
     println!("[+] Running decrypt:");
 
@@ -35,8 +36,10 @@ fn main() {
     println!("- Total Instructions: {total_instruction_count}");
 
     if !cfg!(feature = "profiling") {
-        let decrypted: Vec<u8> = public_values.read();
+        let mut decrypted = [0u8; 20];
+        public_values.read_slice(&mut decrypted);
         assert_eq!(decrypted, address);
+        println!("[+] Decrypted address: {:?}", decrypted);
 
         let now = std::time::Instant::now();
         let proof = client
