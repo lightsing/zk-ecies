@@ -7,6 +7,8 @@ version = "0.1.0"
 hkdf.workspace = true
 hmac.workspace = true
 k256.workspace = true
+openvm-k256.workspace = true
 rand_core.workspace = true
 serde = { workspace = true, features = ["derive"] }
-sha2.workspace = true
+openvm-sha2.workspace = true
+digest.workspace = true

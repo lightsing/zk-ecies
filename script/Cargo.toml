@@ -6,11 +6,13 @@ version = "0.1.0"
 [dependencies]
 ecies-lib.workspace = true
 rand = "0.8"
-sp1-sdk.workspace = true
-
-[build-dependencies]
-sp1-build.workspace = true
-
+openvm-circuit.workspace = true
+openvm-sdk.workspace = true
+openvm-stark-sdk.workspace = true
+toml.workspace = true
+bitcode.workspace = true
+tracing.workspace = true
+openvm-benchmarks-prove.workspace = true
+clap.workspace = true
 
 [features]
-profiling = ["sp1-sdk/profiling"]

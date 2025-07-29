@@ -1,28 +1,28 @@
-#![no_main]
 
 use ecies_lib::*;
 use std::hint::black_box;
+use openvm_k256::Secp256k1Point;
 
-sp1_zkvm::entrypoint!(main);
+openvm::entry!(main);
+openvm::init!();
 
-pub fn main() {
-    let repetitions = sp1_zkvm::io::read::<u32>();
-    let exec_mode = sp1_zkvm::io::read::<ExecMode>();
+fn main() {
+    let repetitions = openvm::io::read::<u32>();
+    let exec_mode = openvm::io::read::<ExecMode>();
 
-    let sk = sp1_zkvm::io::read_vec();
+    let sk = openvm::io::read_vec();
     let sk = SecretKey::from_slice(&sk).unwrap();
-    let ciphertext = sp1_zkvm::io::read_vec();
+    let ciphertext = openvm::io::read_vec();
     let ciphertext: &Message = ciphertext.as_slice().try_into().unwrap();
     let address = decrypt(&sk, ciphertext);
 
-    #[cfg(not(feature = "profiling"))]
-    {
-        if exec_mode == ExecMode::All {
-            for _ in 0..repetitions {
-                black_box(decrypt(black_box(&sk), black_box(ciphertext)));
-            }
+    if exec_mode == ExecMode::All {
+        for _ in 0..repetitions {
+            black_box(decrypt(black_box(&sk), black_box(ciphertext)));
         }
-
-        sp1_zkvm::io::commit_slice(&address);
     }
+
+    let mut out: [u8; 32] = [0u8; 32];
+    out[..20].copy_from_slice(&address);
+    openvm::io::reveal_bytes32(out);
 }

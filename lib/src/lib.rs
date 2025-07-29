@@ -1,12 +1,25 @@
+extern crate core;
+
+#[cfg(target_os = "zkvm")]
+use openvm_k256 as k256;
+
 use hkdf::Hkdf;
 use k256::{
-    AffinePoint, EncodedPoint, ProjectivePoint, Scalar,
+    AffinePoint, EncodedPoint, Scalar,
     elliptic_curve::sec1::{FromEncodedPoint, ToEncodedPoint},
-    sha2::Sha256,
+    elliptic_curve, Secp256k1,
 };
-pub use k256::{PublicKey, SecretKey};
 use rand_core::OsRng;
 use serde::{Deserialize, Serialize};
+use hmac::{Hmac, Mac};
+use sha256::Sha256;
+
+mod sha256;
+
+pub type PublicKey = elliptic_curve::PublicKey<Secp256k1>;
+
+/// secp256k1 (K-256) secret key.
+pub type SecretKey = elliptic_curve::SecretKey<Secp256k1>;
 
 #[derive(Serialize, Deserialize, Copy, Clone, Debug, Eq, PartialEq)]
 pub enum ExecMode {
@@ -21,9 +34,17 @@ pub const HMAC_TAG_SIZE: usize = 32; // HMAC tag size
 pub const MESSAGE_SIZE: usize = PUBLIC_KEY_SIZE + ADDRESS_SIZE + HMAC_TAG_SIZE;
 pub type Message = [u8; MESSAGE_SIZE];
 
+
+#[cfg(target_os = "zkvm")]
 #[inline(always)]
 fn public_mul_tweak(pk: &PublicKey, tweak: &Scalar) -> PublicKey {
-    PublicKey::from_affine((ProjectivePoint::from(pk.as_ref()) * tweak).to_affine()).unwrap()
+    PublicKey::from_affine(pk.as_affine() * tweak).unwrap()
+}
+
+#[cfg(not(target_os = "zkvm"))]
+#[inline(always)]
+fn public_mul_tweak(pk: &PublicKey, tweak: &Scalar) -> PublicKey {
+    PublicKey::from_affine((k256::ProjectivePoint::from(pk.as_ref()) * tweak).to_affine()).unwrap()
 }
 
 #[derive(Default)]
@@ -71,9 +92,6 @@ fn xor_address(address: &[u8; ADDRESS_SIZE], key: &[u8; ADDRESS_SIZE]) -> [u8; A
 
 #[inline(always)]
 fn hmac_sha256(key: &[u8; HMAC_TAG_SIZE], data: &[u8; ADDRESS_SIZE]) -> [u8; HMAC_TAG_SIZE] {
-    use hmac::{Hmac, Mac};
-    use sha2::Sha256;
-
     let mut mac = Hmac::<Sha256>::new_from_slice(key).unwrap();
     mac.update(data);
     let result = mac.finalize();

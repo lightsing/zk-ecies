@@ -10,13 +10,23 @@ resolver = "2"
 ecies-lib = { path = "lib" }
 hkdf = "*"
 hmac = "*"
-k256 = { git = "https://github.com/sp1-patches/elliptic-curves", tag = "patch-k256-13.4-sp1-5.0.0" }
+digest = "*"
 rand_core = "*"
 serde = { version = "1.0", default-features = false }
-sha2 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", tag = "patch-sha2-0.10.9-sp1-4.0.0" }
-sp1-build = "5.0"
-sp1-sdk = "5.0"
-sp1-zkvm = "5.0"
+toml = "*"
+bitcode = "0.6"
+tracing = "*"
+clap = "*"
 
-[patch.crates-io]
-sha2 = { git = "https://github.com/sp1-patches/RustCrypto-hashes", tag = "patch-sha2-0.10.9-sp1-4.0.0" }
+k256 = "0.13"
+
+openvm = { git = "https://github.com/openvm-org/openvm.git", rev = "5368d4756993fc1e51092499a816867cf4808de0" }
+openvm-circuit = { git = "https://github.com/openvm-org/openvm.git", rev = "5368d4756993fc1e51092499a816867cf4808de0" }
+openvm-sdk = { git = "https://github.com/openvm-org/openvm.git", rev = "5368d4756993fc1e51092499a816867cf4808de0" }
+openvm-k256 = { git = "https://github.com/openvm-org/openvm.git", package = "k256", rev = "5368d4756993fc1e51092499a816867cf4808de0", features = ["std"] }
+openvm-sha2 = { git = "https://github.com/openvm-org/openvm.git", rev = "5368d4756993fc1e51092499a816867cf4808de0" }
+openvm-algebra-guest = { git = "https://github.com/openvm-org/openvm.git", rev = "5368d4756993fc1e51092499a816867cf4808de0", default-features = false }
+openvm-ecc-guest = { git = "https://github.com/openvm-org/openvm.git", rev = "5368d4756993fc1e51092499a816867cf4808de0", default-features = false }
+openvm-benchmarks-prove = { git = "https://github.com/openvm-org/openvm.git", rev = "5368d4756993fc1e51092499a816867cf4808de0" }
+
+openvm-stark-sdk = { git = "https://github.com/openvm-org/stark-backend.git", rev = "f48090c9febd021f8ee0349bc929a775fb1fa3ad" }
